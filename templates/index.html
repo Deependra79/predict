@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PredictAI - Model Builder</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background: #000;
+    }
+    
+    /* Wave Background covering entire page */
+    .wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #4973ff;
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+      transition: 0.5s;
+      z-index: -1; /* ensures wave is behind all content */
+    }
+    
+    .wave span {
+      content: "";
+      position: absolute;
+      width: 325vh;
+      height: 325vh;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -75%);
+      background: #000;
+    }
+    
+    .wave span:nth-child(1) {
+      border-radius: 45%;
+      background: rgba(20, 20, 20, 1);
+      animation: animate 5s linear infinite;
+    }
+    
+    .wave span:nth-child(2) {
+      border-radius: 40%;
+      background: rgba(20, 20, 20, 0.5);
+      animation: animate 10s linear infinite;
+    }
+    
+    .wave span:nth-child(3) {
+      border-radius: 42.5%;
+      background: rgba(20, 20, 20, 0.5);
+      animation: animate 15s linear infinite;
+    }
+    
+    @keyframes animate {
+      0% {
+        transform: translate(-50%, -75%) rotate(0deg);
+      }
+      100% {
+        transform: translate(-50%, -75%) rotate(360deg);
+      }
+    }
+    
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+    
+    .container {
+      display: grid;
+      place-items: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    .container:hover {
+      transform: translateY(-10px);
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      transition: color 0.3s ease;
+      color: #fff; /* Changed to white */
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #ddd;
+    }
+    
+    input[type="file"] {
+      padding: 12px;
+      margin: 20px 0;
+      width: 100%;
+      background-color: #fff;
+      color: #333;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+    
+    input[type="file"]:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .wrap {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button {
+      min-width: 300px;
+      min-height: 60px;
+      display: inline-flex;
+      font-family: 'Nunito', sans-serif;
+      font-size: 22px;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1.3px;
+      font-weight: 700;
+      color: #313133;
+      background: linear-gradient(90deg, rgba(129,230,217,1) 0%, rgba(79,209,197,1) 100%);
+      border: none;
+      border-radius: 1000px;
+      box-shadow: 12px 12px 24px rgba(79,209,197,0.64);
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+      outline: none;
+      position: relative;
+      padding: 10px;
+    }
+    
+    .button::before {
+      content: '';
+      border-radius: 1000px;
+      min-width: calc(300px + 12px);
+      min-height: calc(60px + 12px);
+      border: 6px solid #00FFCB;
+      box-shadow: 0 0 60px rgba(0,255,203,0.64);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .button:hover,
+    .button:focus {
+      color: #313133;
+      transform: translateY(-6px);
+    }
+    
+    .button:hover::before,
+    .button:focus::before {
+      opacity: 1;
+    }
+    
+    .button::after {
+      content: '';
+      width: 30px;
+      height: 30px;
+      border-radius: 100%;
+      border: 6px solid #00FFCB;
+      position: absolute;
+      z-index: -1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ring 1.5s infinite;
+    }
+    
+    .button:hover::after,
+    .button:focus::after {
+      animation: none;
+      display: none;
+    }
+    
+    @keyframes ring {
+      0% {
+        width: 30px;
+        height: 30px;
+        opacity: 1;
+      }
+      100% {
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+      }
+    }
+    
+    footer {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1rem;
+      color: #ccc;
+      text-align: center;
+      width: 100%;
+    }
+    
+    footer a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    footer a:hover {
+      color: #ffcc00;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      p {
+        font-size: 1rem;
+      }
+      button {
+        font-size: 1rem;
+        padding: 10px;
+      }
+      footer {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Wave Background -->
+  <div class="wave">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <div class="main-content">
+    <div class="container">
+      <h1>Welcome to PredictAI</h1>
+      <p>Your journey to building machine learning models starts here. Upload your CSV file and let's get started!</p>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="datafile" id="file" accept=".csv" required>
+        <br><br>
+        <div class="wrap">
+          <button type="submit">Upload and Start</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <footer>
+    <p>Powered by PredictAI &copy; 2024 | <a href="#">Privacy Policy</a></p>
+  </footer>
+</body>
+</html>
